@@ -13,6 +13,8 @@ window.addEventListener('DOMContentLoaded', () => {
     
     if (savedUsername && savedPassword) {
         existingBtn.style.display = 'block';
+    } else {
+        existingBtn.style.display = 'none';
     }
 });
 
@@ -23,11 +25,6 @@ loginForm.addEventListener('submit', (e) => {
     const username = usernameInput.value.trim();
     const password = passwordInput.value;
     
-    if (!username || !password) {
-        alert('Please enter both username and password');
-        return;
-    }
-    
     // Show login alert
     alert(`Logged in as ${username}`);
     
@@ -36,22 +33,18 @@ loginForm.addEventListener('submit', (e) => {
         // Store credentials in localStorage
         localStorage.setItem('username', username);
         localStorage.setItem('password', password);
-        
-        // Show the existing user button
-        existingBtn.style.display = 'block';
     } else {
         // Remove credentials from localStorage
         localStorage.removeItem('username');
         localStorage.removeItem('password');
-        
-        // Hide the existing user button
-        existingBtn.style.display = 'none';
     }
     
-    // Optionally clear the form fields after submission
-    usernameInput.value = '';
-    passwordInput.value = '';
-    checkbox.checked = false;
+    // Update existing button visibility
+    if (localStorage.getItem('username') && localStorage.getItem('password')) {
+        existingBtn.style.display = 'block';
+    } else {
+        existingBtn.style.display = 'none';
+    }
 });
 
 // Handle existing user login
@@ -59,8 +52,16 @@ existingBtn.addEventListener('click', () => {
     const savedUsername = localStorage.getItem('username');
     if (savedUsername) {
         alert(`Logged in as ${savedUsername}`);
-    } else {
-        alert('No saved credentials found');
-        existingBtn.style.display = 'none';
     }
 });
+
+// Helper function for testing (if needed)
+function loginUser(username, password) {
+    usernameInput.value = username;
+    passwordInput.value = password;
+    checkbox.checked = true;
+    
+    // Trigger form submission
+    const submitEvent = new Event('submit', { bubbles: true });
+    loginForm.dispatchEvent(submitEvent);
+}
